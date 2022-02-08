@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+   db:
+    container_name: postgres_auth
+    image: postgres:latest
+    restart: always
+    volumes:
+    - postgres-auth-data:/var/lib/mysql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: example
+      POSTGRES_HOSTNAME: localhost
+    ports:
+    - 5432:5432
+
+  spring-rest-api:
+    build: ./rest-api
+    depends_on:
+       - db
+    restart: always
+    environment:
+      - ACTIVE_PROFILE=dev
+      - DB_HOST=
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=example
+    links:
+      - db:postgres
+    ports:
+      - "9090:9090"
+volumes:
+  postgres-auth-data:
